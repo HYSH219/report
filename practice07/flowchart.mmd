@@ -1,0 +1,46 @@
+```mermaid
+flowchart TD
+    A[用户请求] --> B{调用LLM分析}
+    B --> C[解析LLM响应]
+    C --> D{是否完成?}
+    D -->|是| E[输出最终回答]
+    D -->|否| F[执行工具调用]
+    F --> G[获取工具执行结果]
+    G --> H{记录到上下文}
+    H --> I{检查迭代次数}
+    I -->|未达上限| B
+    I -->|已达上限| J[输出警告信息]
+    
+    subgraph 工具列表
+        F --> F1[list_files - 列出文件]
+        F --> F2[read_file - 读取文件]
+        F --> F3[create_file - 创建文件]
+        F --> F4[delete_file - 删除文件]
+        F --> F5[rename_file - 重命名]
+        F --> F6[fetch_web_content - 获取网页]
+        F --> F7[search_files_content - 搜索内容]
+    end
+    
+    subgraph 上下文管理
+        H --> H1[调用历史记录]
+        H --> H2[中间变量存储]
+        H --> H3[迭代计数]
+    end
+    
+    subgraph 测试场景
+        S1[文件搜索链式调用] --> S1a[list_files]
+        S1a --> S1b[search_files_content]
+        S1b --> S1c[总结结果]
+        
+        S2[多文件操作] --> S2a[read_file 1.txt]
+        S2a --> S2b[read_file 2.txt]
+        S2b --> S2c[create_file result.txt]
+        
+        S3[网页处理链式调用] --> S3a[fetch_web_content]
+        S3a --> S3b[create_file summary.txt]
+    end
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style E fill:#9f9,stroke:#333,stroke-width:2px
+    style J fill:#f99,stroke:#333,stroke-width:2px
+```
